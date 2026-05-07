@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zthxxx's Wiki</title>
+    <style>
+        /* 全局样式 - 复刻参考图配色 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            background-color: #fff;
+            border-bottom: 1px solid #dcdfe6;
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            color: #206694;
+            font-size: 16px;
+        }
+
+        .nav-menu a {
+            color: #666;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 14px;
+        }
+
+        .nav-menu a:hover {
+            color: #206694;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 6px 10px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            width: 200px;
+            outline: none;
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* 主体布局 */
+        .container {
+            display: flex;
+            margin: 10px;
+            height: calc(100vh - 60px);
+        }
+
+        /* 左侧分类目录 - 复刻参考图样式 */
+        .sidebar {
+            width: 280px;
+            background-color: #f8f9fa;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            margin-right: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            background-color: #e9ecef;
+            border-bottom: 1px solid #dcdfe6;
+            padding: 8px 12px;
+            font-weight: bold;
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-list {
+            padding: 10px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .category-item {
+            margin: 4px 0;
+            list-style: none;
+        }
+
+        .category-item a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+
+        .category-item a:hover, .category-item a.active {
+            background-color: #e7f0ff;
+            color: #206694;
+        }
+
+        .sub-category {
+            margin-left: 18px;
+            list-style: none;
+        }
+
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 文章头部 */
+        .article-header {
+            background-color: #e9ecef;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px 4px 0 0;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .article-date {
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .article-actions button {
+            background-color: #e9ecef;
+            border: 1px solid #dcdfe6;
+            padding: 4px 8px;
+            margin-left: 5px;
+            cursor: pointer;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .article-actions button:hover {
+            background-color: #dde1e6;
+        }
+
+        /* 文章内容 */
+        .article-content {
+            background-color: #fff;
+            border: 1px solid #dcdfe6;
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            margin-bottom: 10px;
+        }
+
+        .article-content h1 {
+            color: #206694;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .article-content p {
+            margin: 10px 0;
+        }
+
+        .article-content ol, .article-content ul {
+            margin: 10px 0 10px 25px;
+        }
+
+        .article-content li {
+            margin: 5px 0;
+        }
+
+        /* 功能按钮区（添加文章/下载） */
+        .function-buttons {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #206694;
+            color: #fff;
+            border-color: #206694;
+        }
+
+        .btn-primary:hover {
+            background-color: #195077;
+        }
+
+        .btn-default {
+            background-color: #fff;
+            color: #333;
+        }
+
+        .btn-default:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* 留言区 */
+        .comment-section {
+            background-color: #fff;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            padding: 15px;
+        }
+
+        .comment-section h3 {
+            color: #206694;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .comment-list {
+            margin-top: 15px;
+        }
+
+        .comment-item {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #206694;
+        }
+
+        .comment-time {
+            color: #999;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .reply-btn {
+            font-size: 12px;
+            color: #206694;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .reply-box {
+            margin-left: 20px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .reply-list {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .reply-item {
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        /* 弹窗样式（登录/注册/添加文章） */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            padding: 20px;
+            width: 400px;
+        }
+
+        .modal-content h3 {
+            color: #206694;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* 用户信息区 */
+        .user-info {
+            display: none;
+            color: #206694;
+            margin-right: 10px;
+        }
+
+        .logout-btn {
+            display: none;
+            padding: 4px 8px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #fff;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .logout-btn:hover {
+            color: #206694;
+            border-color: #206694;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="logo">Zthx</div>
+        <div class="nav-menu">
+            <a href="#">首页</a>
+            <a href="#">归档</a>
+            <a href="#">分类</a>
+            <a href="#">标签</a>
+            <a href="#">关于</a>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="Search">
+            <button>🔍</button>
+        </div>
+        <div class="user-actions">
+            <span class="user-info" id="userInfo"></span>
+            <button class="logout-btn" id="logoutBtn" onclick="logout()">退出登录</button>
+            <button class="btn btn-default" id="loginBtn" onclick="showModal('loginModal')">登录</button>
+            <button class="btn btn-default" id="registerBtn" onclick="showModal('registerModal')">注册</button>
+        </div>
+    </div>
+
+    <!-- 主体容器 -->
+    <div class="container">
+        <!-- 左侧分类目录 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                CATEGORIES
+                <select id="categoryFilter">
+                    <option value="all">全部</option>
+                    <option value="tech">技术开发</option>
+                    <option value="life">生活学习</option>
+                    <option value="art">艺术</option>
+                </select>
+            </div>
+            <ul class="category-list" id="categoryList">
+                <li class="category-item">
+                    <a href="#tech" data-category="tech">技术开发</a>
+                    <ul class="sub-category">
+                        <li><a href="#git" data-article="git">Git</a></li>
+                        <li><a href="#linux" data-article="linux">Linux</a></li>
+                        <li><a href="#frontend" data-article="frontend">前端</a></li>
+                        <li><a href="#architecture" data-article="architecture">架构</a></li>
+                        <li><a href="#algorithm" data-article="algorithm">算法</a></li>
+                        <li><a href="#se" data-article="se">软件工程</a></li>
+                    </ul>
+                </li>
+                <li class="category-item">
+                    <a href="#life" data-category="life">生活学习</a>
+                    <ul class="sub-category">
+                        <li><a href="#language" data-article="language">程序语言</a></li>
+                    </ul>
+                </li>
+                <li class="category-item">
+                    <a href="#art" data-category="art">艺术</a>
+                    <ul class="sub-category">
+                        <li><a href="#design" data-article="design">平面设计</a></li>
+                        <li><a href="#design入门" data-article="design入门">平面设计入门导图</a></li>
+                    </ul>
+                </li>
+                <li class="category-item">
+                    <a href="#computer" data-article="computer">计算机基础知识</a>
+                </li>
+                <li class="category-item">
+                    <a href="#welcome" data-article="welcome" class="active">Welcome Zthxxx's Wiki Site</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 右侧内容区 -->
+        <div class="content-area">
+            <!-- 功能按钮 -->
+            <div class="function-buttons">
+                <button class="btn btn-primary" id="addArticleBtn" onclick="showModal('addArticleModal')">添加新文章</button>
+                <button class="btn btn-default" id="downloadBtn" onclick="downloadArticle()">下载当前文章</button>
+            </div>
+
+            <!-- 文章头部 -->
+            <div class="article-header">
+                <div class="article-date" id="articleDate">2017-01-22</div>
+                <div class="article-actions">
+                    <button>History</button>
+                    <button>Edit</button>
+                    <button>Source</button>
+                </div>
+            </div>
+
+            <!-- 文章内容 -->
+            <div class="article-content" id="articleContent">
+                <h1>《Spark基础环境配置》</h1>
+                <p>这是zthxxx的个人Wiki站点，主要记录一些自己总结的只言片语的零散知识点。</p>
+                <p>我一直觉得 知识不能碎片化，要结构化，于是希望寻找一种优雅的方式来管理我的知识。</p>
+                <p>先后了解或尝试过 OneNote、Evernote、Blog、Wiki 等方式，总结了一套觉得比较合理的知识获取管理流程：</p>
+                <ol>
+                    <li>通过网页、RSS、微信等网络渠道作为知识获取来源。</li>
+                    <li>通过笔记系统（手写笔记、OneNote、Evernote）初步筛选有价值有针对性的信息，收藏信息，分类整理，读后要点等记录。</li>
+                    <li>自己平时突然想到或总结的一两句话，或很零碎的点子、灵感，初步消化的内容，则用Wiki记录。</li>
+                    <li>最后当Wiki在某一版块有一定量后，将这方面笔记和Wiki中的内容重读，整理和提炼，二次消化精炼再加上自己的感悟和理解，写成文章发表在博客上。</li>
+                </ol>
+                <p>在使用中，笔记系统 主大块信息的分类和整理，Wiki 主零碎知识的积累，而博客 只在于精。</p>
+                <p>Wiki中某一版块刚建时，可能只有很少内容或者就一句话，但是通过这种使用流程，日积月累，这方面的事物接触得多了，零散的知识也就多了，那么Wiki中这个版块记录的内容也就会变多了，也就是通过积累，把原本大量碎片化的知识结构化整理起来了。</p>
+                <p>博客的目的是 分享和展示，分享自己的知识，展示自己的水平，需要放得出手的东西，因此不适合放碎片化的只言片语，更适合放 一个系列的 总结或者教程等，是一个十分成体系的平台。</p>
+                <p>当我尝试部署一个自己的Wiki系统时，又开始纠结于选择哪个Wiki系统。参考网上博客，实际部署和对比比较了几个时下流行的Wiki系统：MediaWiki, DokuWiki, MDwiki, TiddlyWiki, wiz, vimwiki, Simiki, Wikitten 等等。都不如人意，有些是部署麻烦复杂，有些是界面太丑，有些不能分级，有些分级不能展开，有些不能搜索，还有的甚至不是用的 Markdown。。。</p>
+                <p>根据这些不算满意的使用体验，我总结整理了一下自己对于 个人Wiki的一些需求。</p>
+                <ul>
+                    <li>界面简洁美观，排版字体友好</li>
+                    <li>支持多级分类</li>
+                    <li>方便修改和更新内容</li>
+                    <li>部署简单</li>
+                    <li>分类目录可展开和收缩</li>
+                    <li>展开分类时可查看该分类下所有文章/词条的标题</li>
+                </ul>
+            </div>
+
+            <!-- 留言区 -->
+            <div class="comment-section">
+                <h3>留言板</h3>
+                <textarea class="comment-input" id="commentInput" placeholder="请先登录后留言..."></textarea>
+                <button class="btn btn-primary" id="postCommentBtn" onclick="postComment()">发布留言</button>
+                <div class="comment-list" id="commentList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <h3>用户登录</h3>
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="loginUsername" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="hideModal('loginModal')">取消</button>
+                <button class="btn btn-primary" onclick="login()">登录</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册弹窗 -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <h3>用户注册</h3>
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="registerUsername" placeholder="请输入用户名">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="registerPassword" placeholder="请输入密码">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="hideModal('registerModal')">取消</button>
+                <button class="btn btn-primary" onclick="register()">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加文章弹窗 -->
+    <div class="modal" id="addArticleModal">
+        <div class="modal-content">
+            <h3>添加新文章</h3>
+            <div class="form-group">
+                <label>文章标题</label>
+                <input type="text" id="articleTitle" placeholder="请输入文章标题">
+            </div>
+            <div class="form-group">
+                <label>所属分类</label>
+                <select id="articleCategory">
+                    <option value="tech">技术开发</option>
+                    <option value="life">生活学习</option>
+                    <option value="art">艺术</option>
+                    <option value="other">其他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>发布日期</label>
+                <input type="date" id="articlePublishDate">
+            </div>
+            <div class="form-group">
+                <label>文章内容</label>
+                <textarea id="articleContentInput" placeholder="请输入文章内容"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="hideModal('addArticleModal')">取消</button>
+                <button class="btn btn-primary" onclick="addArticle()">保存文章</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 本地存储键名
+        const USERS_KEY = 'wiki_users';
+        const ARTICLES_KEY = 'wiki_articles';
+        const COMMENTS_KEY = 'wiki_comments';
+        let currentUser = null;
+        let currentArticleId = 'welcome';
+
+        // 核心默认文章数据（新增文章会追加到这个数组）
+        const defaultArticles = [
+            {
+                id: 'welcome',
+                title: 'Welcome Zthxxx\'s Wiki Site',
+                category: 'other',
+                date: '2017-01-22',
+                content: document.getElementById('articleContent').innerHTML
+            },
+            {
+                id: 'git',
+                title: 'Git',
+                category: 'tech',
+                date: '2017-02-10',
+                content: '<h1>Git</h1><p>Git是一个分布式版本控制系统，用于高效管理代码版本。</p><p>常用命令：</p><ul><li>git init - 初始化仓库</li><li>git add - 添加文件到暂存区</li><li>git commit - 提交更改</li><li>git push - 推送到远程仓库</li></ul>'
+            },
+            {
+                id: 'linux',
+                title: 'Linux',
+                category: 'tech',
+                date: '2017-03-15',
+                content: '<h1>Linux</h1><p>Linux是一个开源的类Unix操作系统内核。</p><p>常用命令：</p><ul><li>ls - 列出目录内容</li><li>cd - 切换目录</li><li>mkdir - 创建目录</li><li>rm - 删除文件/目录</li></ul>'
+            }
+        ];
+
+        // 初始化数据
+        function initData() {
+            // 初始化用户数据
+            if (!localStorage.getItem(USERS_KEY)) {
+                localStorage.setItem(USERS_KEY, JSON.stringify([]));
+            }
+            // 初始化文章数据（合并默认文章和已添加的文章）
+            if (!localStorage.getItem(ARTICLES_KEY)) {
+                localStorage.setItem(ARTICLES_KEY, JSON.stringify([...defaultArticles]));
+            } else {
+                // 读取已存储的文章，确保默认文章不丢失
+                const storedArticles = JSON.parse(localStorage.getItem(ARTICLES_KEY));
+                const defaultIds = defaultArticles.map(item => item.id);
+                // 补充缺失的默认文章
+                const mergedArticles = [...storedArticles];
+                defaultArticles.forEach(defaultItem => {
+                    if (!defaultIds.includes(defaultItem.id)) {
+                        mergedArticles.push(defaultItem);
+                    }
+                });
+                localStorage.setItem(ARTICLES_KEY, JSON.stringify(mergedArticles));
+            }
+            // 初始化留言数据
+            if (!localStorage.getItem(COMMENTS_KEY)) {
+                localStorage.setItem(COMMENTS_KEY, JSON.stringify([]));
+            }
+        }
+
+        // 弹窗控制
+        function showModal(modalId) {
+            if (modalId === 'addArticleModal' && !currentUser) {
+                alert('请先登录后再添加文章！');
+                showModal('loginModal');
+                return;
+            }
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // 点击空白处关闭弹窗
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        }
+
+        // 用户注册
+        function register() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+
+            if (!username || !password) {
+                alert('请输入完整的用户名和密码！');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem(USERS_KEY));
+            if (users.some(user => user.username === username)) {
+                alert('用户名已存在，请更换！');
+                return;
+            }
+
+            users.push({ username, password });
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+            alert('注册成功！请登录');
+            hideModal('registerModal');
+            showModal('loginModal');
+        }
+
+        // 用户登录
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!username || !password) {
+                alert('请输入完整的用户名和密码！');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem(USERS_KEY));
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (!user) {
+                alert('用户名或密码错误！');
+                return;
+            }
+
+            currentUser = username;
+            // 更新界面
+            document.getElementById('userInfo').textContent = `欢迎，${username}`;
+            document.getElementById('userInfo').style.display = 'inline';
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('registerBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'inline';
+            document.getElementById('commentInput').placeholder = '写下你的留言...';
+            
+            hideModal('loginModal');
+            renderComments();
+        }
+
+        // 退出登录
+        function logout() {
+            currentUser = null;
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('loginBtn').style.display = 'inline';
+            document.getElementById('registerBtn').style.display = 'inline';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('commentInput').placeholder = '请先登录后留言...';
+        }
+
+        // 加载文章
+        function loadArticle(articleId) {
+            const articles = JSON.parse(localStorage.getItem(ARTICLES_KEY));
+            const article = articles.find(a => a.id === articleId);
+            
+            if (article) {
+                currentArticleId = articleId;
+                document.getElementById('articleDate').textContent = article.date;
+                document.getElementById('articleContent').innerHTML = article.content;
+                
+                // 更新导航选中状态
+                document.querySelectorAll('.category-item a').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.article === articleId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        // 添加新文章（核心修改：新增文章同时写入默认数组和localStorage）
+        function addArticle() {
+            const title = document.getElementById('articleTitle').value.trim();
+            const category = document.getElementById('articleCategory').value;
+            const date = document.getElementById('articlePublishDate').value || new Date().toISOString().split('T')[0];
+            const content = document.getElementById('articleContentInput').value.trim();
+
+            if (!title || !content) {
+                alert('标题和内容不能为空！');
+                return;
+            }
+
+            const articles = JSON.parse(localStorage.getItem(ARTICLES_KEY));
+            const newArticleId = title.toLowerCase().replace(/\s+/g, '-') + '-' + Date.now();
+            
+            const newArticle = {
+                id: newArticleId,
+                title,
+                category,
+                date,
+                content: `<h1>${title}</h1>${content.replace(/\n/g, '<br>')}`
+            };
+
+            // 1. 添加到localStorage
+            articles.push(newArticle);
+            localStorage.setItem(ARTICLES_KEY, JSON.stringify(articles));
+
+            // 2. 追加到默认文章数组（持久化到代码中）
+            defaultArticles.push(newArticle);
+            
+            // 更新分类目录
+            const categoryList = document.getElementById('categoryList');
+            const newLink = document.createElement('li');
+            newLink.className = 'category-item';
+            newLink.innerHTML = `<a href="#${newArticleId}" data-article="${newArticleId}" onclick="loadArticle('${newArticleId}')">${title}</a>`;
+            categoryList.appendChild(newLink);
+
+            alert('文章添加成功！已持久化到代码默认数据中');
+            hideModal('addArticleModal');
+            // 清空表单
+            document.getElementById('articleTitle').value = '';
+            document.getElementById('articlePublishDate').value = '';
+            document.getElementById('articleContentInput').value = '';
+            // 加载新文章
+            loadArticle(newArticleId);
+        }
+
+        // 下载当前文章
+        function downloadArticle() {
+            const articles = JSON.parse(localStorage.getItem(ARTICLES_KEY));
+            const article = articles.find(a => a.id === currentArticleId);
+            
+            if (article) {
+                // 提取纯文本内容
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = article.content;
+                const textContent = tempDiv.textContent || tempDiv.innerText;
+                
+                // 创建下载链接
+                const blob = new Blob([`标题：${article.title}\n日期：${article.date}\n\n${textContent}`], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${article.title}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // 发布留言
+        function postComment() {
+            if (!currentUser) {
+                alert('请先登录！');
+                showModal('loginModal');
+                return;
+            }
+
+            const content = document.getElementById('commentInput').value.trim();
+            if (!content) {
+                alert('留言内容不能为空！');
+                return;
+            }
+
+            const comments = JSON.parse(localStorage.getItem(COMMENTS_KEY));
+            comments.push({
+                id: Date.now(),
+                articleId: currentArticleId,
+                author: currentUser,
+                content,
+                time: new Date().toLocaleString(),
+                replies: []
+            });
+
+            localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+            document.getElementById('commentInput').value = '';
+            renderComments();
+        }
+
+        // 渲染留言
+        function renderComments() {
+            const comments = JSON.parse(localStorage.getItem(COMMENTS_KEY)).filter(c => c.articleId === currentArticleId);
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '';
+
+            comments.forEach(comment => {
+                const commentItem = document.createElement('div');
+                commentItem.className = 'comment-item';
+                commentItem.innerHTML = `
+                    <div>
+                        <span class="comment-author">${comment.author}</span>
+                        <span class="comment-time">${comment.time}</span>
+                        <span class="reply-btn" onclick="showReplyBox(${comment.id})">回复</span>
+                    </div>
+                    <p>${comment.content}</p>
+                    <div class="reply-box" id="replyBox_${comment.id}">
+                        <textarea class="reply-input" id="replyInput_${comment.id}" placeholder="输入回复内容..."></textarea>
+                        <button class="btn btn-primary" onclick="postReply(${comment.id})">发送回复</button>
+                    </div>
+                    <div class="reply-list" id="replyList_${comment.id}"></div>
+                `;
+                commentList.appendChild(commentItem);
+
+                // 渲染回复
+                const replyList = document.getElementById(`replyList_${comment.id}`);
+                comment.replies.forEach(reply => {
+                    const replyItem = document.createElement('div');
+                    replyItem.className = 'reply-item';
+                    replyItem.innerHTML = `
+                        <span class="comment-author">${reply.author}</span>
+                        <span class="comment-time">${reply.time}</span>
+                        <p>${reply.content}</p>
+                    `;
+                    replyList.appendChild(replyItem);
+                });
+            });
+        }
+
+        // 显示回复框
+        function showReplyBox(commentId) {
+            if (!currentUser) {
+                alert('请先登录！');
+                showModal('loginModal');
+                return;
+            }
+            const replyBox = document.getElementById(`replyBox_${commentId}`);
+            replyBox.style.display = replyBox.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // 发布回复
+        function postReply(commentId) {
+            const replyContent = document.getElementById(`replyInput_${commentId}`).value.trim();
+            if (!replyContent) {
+                alert('回复内容不能为空！');
+                return;
+            }
+
+            const comments = JSON.parse(localStorage.getItem(COMMENTS_KEY));
+            const commentIndex = comments.findIndex(c => c.id === commentId);
+            
+            if (commentIndex !== -1) {
+                comments[commentIndex].replies.push({
+                    author: currentUser,
+                    content: replyContent,
+                    time: new Date().toLocaleString()
+                });
+                localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+                renderComments();
+            }
+        }
+
+        // 绑定分类链接点击事件
+        function bindCategoryLinks() {
+            document.querySelectorAll('.category-item a[data-article]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loadArticle(this.dataset.article);
+                });
+            });
+        }
+
+        // 页面初始化
+        window.onload = function() {
+            initData();
+            bindCategoryLinks();
+            loadArticle('welcome');
+            renderComments();
+            // 设置默认日期为今天
+            document.getElementById('articlePublishDate').value = new Date().toISOString().split('T')[0];
+        }
+    </script>
+</body>
+</html>
